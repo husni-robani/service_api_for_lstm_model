@@ -5,21 +5,27 @@ from pathlib import Path
 import torch
 import sys
 # append another directory
-sys.path.append('/Users/bani/dev/project_TA/Flask_API/model')
-sys.path.append('/Users/bani/dev/project_TA/Flask_API/utils')
+sys.path.append('/Users/bani/dev/project_TA/service_api_for_lstm_model/model')
+sys.path.append('/Users/bani/dev/project_TA/service_api_for_lstm_model/utils')
 # custom dependencies
-import model_config as config
-import model_architecture
-from preprocessing import TextPreprocessing
+import model as module_model
+import preprocessing
 
 class Predict():
     def __init__(self):
-        self.model = model_architecture.LSTMClassifier(config.input_size, config.hidden_size, config.num_layers, config.num_classes, config.dropout)
+        self.model = module_model.LSTMClassifier()
         self.model.load_state_dict(torch.load('./model/pretrained_model/lstm_model.pt'))
+        self.study_program_encoder = {
+            "Akuntansi": 0,
+            "Manajemen": 1,
+            "Teknik Informatika": 2,
+            "Bahasa Inggris": 3,
+            "DKV": 4
+        }
     def make_predict(self, text):
         # preprocess the text to numerical representation
-        preprocessing = TextPreprocessing()
-        text = preprocessing.preprocess_text(text)
+        preprocess = preprocessing.TextPreprocessing()
+        text = preprocess.preprocess_text(text)
 
         # predict with model
         self.model.eval()
@@ -28,7 +34,7 @@ class Predict():
             predicted_class = torch.argmax(output, dim=1).item()
         
         # decode study program code
-        for study_program, code in config.studyprogram_encoder.items():
+        for study_program, code in self.study_program_encoder.items():
             if predicted_class == code:
                 result = study_program
         
