@@ -3,22 +3,25 @@ from torch import nn
 
 class LSTMClassifier(nn.Module):
     """this is LSTM custom model class"""
-    def __init__(self, input_size, hidden_size, num_layers, num_classes, dropout):
+    def __init__(self):
         super(LSTMClassifier, self).__init__()
-        self.hidden_size = hidden_size
-        self.num_layers = num_layers
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        # self.fc = nn.Linear(hidden_size, num_classes)
+        self.__hidden_size = 128
+        self.__input_size = 128
+        self.__num_layers = 2
+        self.__num_classes = 5
+        self.__dropout = 0.2
+        self.lstm = nn.LSTM(self.__input_size, self.__hidden_size, self.__num_layers, batch_first=True)
+        
         self.fc = nn.Sequential(
-            nn.Linear(hidden_size, hidden_size//2),
+            nn.Linear(self.__hidden_size, self.__hidden_size//2),
             nn.ReLU(),
-            nn.Dropout(dropout),
+            nn.Dropout(self.__dropout),
 
-            nn.Linear(hidden_size//2, hidden_size//4),
+            nn.Linear(self.__hidden_size//2, self.__hidden_size//4),
             nn.ReLU(),
-            nn.Dropout(dropout),
+            nn.Dropout(self.__dropout),
 
-            nn.Linear(hidden_size//4, num_classes),
+            nn.Linear(self.__hidden_size//4, self.__num_classes),
             nn.LogSoftmax(dim=1)
         )
         
