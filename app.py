@@ -6,26 +6,27 @@ from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 CORS(app=app)
 
-
 @app.route('/api/predict', methods=['POST'])
-def predict():
-    print('test')
-    abstract = request.json.get('abstract')
-
-    if not abstract or abstract == '':
-        return jsonify({
-            "message": "You must include abstract correctly"
-        }), 400
+def predicts():
+    abstracts = request.json.get('abstracts')
 
     predict = Predict()
-    result = predict.make_predict(abstract)
-    study_program, index, tensor= result
+    results = []
+
+    for abstract in abstracts:
+        if not abstract or abstract == '':
+            return jsonify({
+                "message": "You must include abstract correctly"
+            }), 400
+        
+        result = predict.make_predict(abstract)
+        study_program, index, tensor = result
+        results.append(study_program)
 
     return jsonify({
-        "message": "predict success!!",
-        "result": study_program
+        "message": "Success",
+        "results": results
     }), 200
-
 
 if __name__ == '__main__':
     app.run(host="127.0.0.1", port="8080")
