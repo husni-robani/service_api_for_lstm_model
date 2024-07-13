@@ -1,7 +1,49 @@
-# Text Classification RestAPI Service
+# Study Program Text Classifier API
 
-Ini merupakan service RESTful API. Didalam service API nya sendiri terdapat model LSTM yang sudah dilatih agar dapat melakukan klasifikasi teks berupa abstrak karya tulis ilmiah kedalam kategori bidang keilmuannya.
+The Study Program Text Classifier API is a RESTful API that classifies indonesian abstract texts into study programs (Manajemen, Akuntansi, Teknik Informatika, Bahasa dan Sastra Inggris, Desain dan Komunikasi Visual). This API accepts text abstracts and returns the predicted study program with confidence score and it allows training the pretrained model on new data.
 
-## Project Purpose
+## Features
 
-Tujuan dari project ini adalah mengintegrasikan model deep learning dengan algoritma LSTM yang sudah saya buat sebelumnya (https://github.com/husni-robani/LSTM-multi-class-text-classification) dengan service backend berupa RESTful API agar dapat digunakan dalam berbagai platform dengan mudah.
+- Classify text abstracts into study programs and receive the prediction results with confidence score.
+- Train the pretrained model to learn from new data (of course indonesian abstract text).
+
+## Technologies
+
+- Python
+- PyTorch
+- Gensim (Word2Vec)
+- Pandas
+
+## API Endpoints
+
+### 1. Classify Text Abstract
+
+- **URL:** `/api/predict`
+- **Method:** `POST`
+- **Headers:**
+  ```http
+  Content-Type: application/json
+  ```
+- **Body:**
+  ```json
+  {
+      "abstracts": ["Your text abstract here", ...]
+  }
+  ```
+- **Response:**
+  ```json
+  {
+      "message": "success",
+      "results": ...
+  }
+  ```
+
+## Example Requests
+
+### Classify Text Abstract
+
+Here is an example using `curl` to classify a text abstract:
+
+```bash
+curl -X POST http://localhost:5000/api/classify -H "Content-Type: application/json" -d '{"text": "An abstract about advanced computing techniques"}'
+```

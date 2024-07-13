@@ -8,9 +8,14 @@ CORS(app=app)
 
 @app.route('/api/predict', methods=['POST'])
 def predicts():
-    abstracts = request.json.get('abstracts')
-
-    predict = Predict()
+    try:
+        abstracts = request.json.get('abstracts')
+    except Exception as e:
+        app.logger.error("Error when try to get abstract json")
+        return jsonify({
+            "message": "Abstract not provided"
+        }), 400
+        
     results = []
 
     for abstract in abstracts:
@@ -19,9 +24,18 @@ def predicts():
                 "message": "You must include abstract correctly"
             }), 400
         
-        result = predict.make_predict(abstract)
-        study_program, index, tensor = result
-        results.append(study_program)
+        try:
+            predict = Predict()
+            result = predict.make_predict(abstract)
+        except Exception as e:
+            return jsonify({
+                "message": "Abstract Value Error",
+                "errors": "The abstract cannot be process"
+            }), 400
+        else:
+            study_program, index, tensor = result
+            results.append(study_program)
+            app.logger.info(f"Predict success - {study_program}")
 
     return jsonify({
         "message": "Success",
@@ -29,4 +43,4 @@ def predicts():
     }), 200
 
 if __name__ == '__main__':
-    app.run(host="127.0.0.1", port="8080")
+    app.run(host="127.0.0.1", port="8080", debug=True)
